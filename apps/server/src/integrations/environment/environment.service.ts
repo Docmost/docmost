@@ -16,6 +16,16 @@ export class EnvironmentService {
     );
   }
 
+  isHttps(): boolean {
+    const appUrl = this.configService.get<string>('APP_URL');
+    try {
+      const url = new URL(appUrl);
+      return url.protocol === 'https:';
+    } catch (error) {
+      return false;
+    }
+  }
+
   getPort(): number {
     return parseInt(this.configService.get<string>('PORT', '3000'));
   }
@@ -41,6 +51,10 @@ export class EnvironmentService {
 
   getStorageDriver(): string {
     return this.configService.get<string>('STORAGE_DRIVER', 'local');
+  }
+
+  getFileUploadSizeLimit(): string {
+    return this.configService.get<string>('FILE_UPLOAD_SIZE_LIMIT', '50mb');
   }
 
   getAwsS3AccessKeyId(): string {
@@ -115,6 +129,10 @@ export class EnvironmentService {
 
   getPostmarkToken(): string {
     return this.configService.get<string>('POSTMARK_TOKEN');
+  }
+
+  getDrawioUrl(): string {
+    return this.configService.get<string>('DRAWIO_URL');
   }
 
   isCloud(): boolean {
