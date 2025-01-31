@@ -41,6 +41,9 @@ import LinkMenu from "@/features/editor/components/link/link-menu.tsx";
 import ExcalidrawMenu from "./components/excalidraw/excalidraw-menu";
 import DrawioMenu from "./components/drawio/drawio-menu";
 import { useCollabToken } from "@/features/auth/queries/auth-query.tsx";
+import { authTokensAtom } from "../auth/atoms/auth-tokens-atom";
+import { Box } from "@mantine/core";
+import { EditorHeadingsMenu } from "./components/headings-menu/headings-menu";
 
 interface PageEditorProps {
   pageId: string;
@@ -194,26 +197,37 @@ export default function PageEditor({
 
   return isSynced ? (
     <div>
-      <div ref={menuContainerRef}>
-        <EditorContent editor={editor} />
+      <Box
+          style={{
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+          ref={menuContainerRef}
+        >
+          <EditorContent editor={editor} />
+          {currentUser?.user?.settings?.preferences?.viewHeadings && (
+            <EditorHeadingsMenu editor={editor} />
+          )}
 
-        {editor && editor.isEditable && (
-          <div>
-            <EditorBubbleMenu editor={editor} />
-            <TableMenu editor={editor} />
-            <TableCellMenu editor={editor} appendTo={menuContainerRef} />
-            <ImageMenu editor={editor} />
-            <VideoMenu editor={editor} />
-            <CalloutMenu editor={editor} />
-            <ExcalidrawMenu editor={editor} />
-            <DrawioMenu editor={editor} />
-            <LinkMenu editor={editor} appendTo={menuContainerRef} />
-          </div>
-        )}
+          {editor && editor.isEditable && (
+            <div>
+              <EditorBubbleMenu editor={editor} />
+              <TableMenu editor={editor} />
+              <TableCellMenu editor={editor} appendTo={menuContainerRef} />
+              <ImageMenu editor={editor} />
+              <VideoMenu editor={editor} />
+              <CalloutMenu editor={editor} />
+              <ExcalidrawMenu editor={editor} />
+              <DrawioMenu editor={editor} />
+              <LinkMenu editor={editor} appendTo={menuContainerRef} />
+            </div>
+          )}
 
-        {showCommentPopup && <CommentDialog editor={editor} pageId={pageId} />}
-      </div>
-
+          {showCommentPopup && (
+            <CommentDialog editor={editor} pageId={pageId} />
+          )}
+        </Box>
       <div
         onClick={() => editor.commands.focus("end")}
         style={{ paddingBottom: "20vh" }}

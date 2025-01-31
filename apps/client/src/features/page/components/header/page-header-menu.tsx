@@ -1,5 +1,6 @@
 import { ActionIcon, Group, Menu, Tooltip } from "@mantine/core";
 import {
+  IconAlignRight2,
   IconArrowsHorizontal,
   IconDots,
   IconFileExport,
@@ -27,6 +28,7 @@ import { PageWidthToggle } from "@/features/user/components/page-width-pref.tsx"
 import { useTranslation } from "react-i18next";
 import ExportModal from "@/components/common/export-modal";
 import { yjsConnectionStatusAtom } from "@/features/editor/atoms/editor-atoms.ts";
+import { ViewHeadingsToggle } from "@/features/user/components/view-headings";
 
 interface PageHeaderMenuProps {
   readOnly?: boolean;
@@ -130,6 +132,12 @@ function PageActionMenu({ readOnly }: PageActionMenuProps) {
           <Menu.Item leftSection={<IconArrowsHorizontal size={16} />}>
             <Group wrap="nowrap">
               <PageWidthToggle label={t("Full width")} />
+            </Group>
+          </Menu.Item>
+
+          <Menu.Item leftSection={<IconAlignRight2 size={16} />}>
+            <Group wrap="nowrap">
+              <ViewHeadingsToggle label={t("View headings")} />
             </Group>
           </Menu.Item>
 
