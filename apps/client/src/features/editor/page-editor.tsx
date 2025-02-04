@@ -21,7 +21,7 @@ import {
   pageEditorAtom,
   yjsConnectionStatusAtom,
 } from "@/features/editor/atoms/editor-atoms";
-import { asideStateAtom } from "@/components/layouts/global/hooks/atoms/sidebar-atom";
+import { asideStateAtom, viewHeadingsAtom } from "@/components/layouts/global/hooks/atoms/sidebar-atom";
 import {
   activeCommentIdAtom,
   showCommentPopupAtom,
@@ -41,6 +41,9 @@ import LinkMenu from "@/features/editor/components/link/link-menu.tsx";
 import ExcalidrawMenu from "./components/excalidraw/excalidraw-menu";
 import DrawioMenu from "./components/drawio/drawio-menu";
 import { useCollabToken } from "@/features/auth/queries/auth-query.tsx";
+import { authTokensAtom } from "../auth/atoms/auth-tokens-atom";
+import { Box } from "@mantine/core";
+import { EditorHeadingsMenu } from "./components/headings-menu/headings-menu";
 
 interface PageEditorProps {
   pageId: string;
@@ -65,6 +68,7 @@ export default function PageEditor({
   const [yjsConnectionStatus, setYjsConnectionStatus] = useAtom(
     yjsConnectionStatusAtom,
   );
+  const [isOpenedViewHeadings, setIsOpenedViewHeadings] = useAtom(viewHeadingsAtom);
   const menuContainerRef = useRef(null);
   const documentName = `page.${pageId}`;
   const { data } = useCollabToken();
@@ -194,8 +198,23 @@ export default function PageEditor({
 
   return isSynced ? (
     <div>
-      <div ref={menuContainerRef}>
+      <Box
+        style={{
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+        ref={menuContainerRef}
+      >
         <EditorContent editor={editor} />
+        {currentUser?.user?.settings?.preferences?.viewHeadings && (
+          <EditorHeadingsMenu
+            editor={editor}
+            isFullScreenEditor={currentUser?.user?.settings?.preferences?.fullPageWidth}
+            isOpenedViewHeadingsDrawer={isOpenedViewHeadings}
+            setIsOpenedViewHeadingsDrawer={setIsOpenedViewHeadings}
+          />
+        )}
 
         {editor && editor.isEditable && (
           <div>
@@ -211,9 +230,10 @@ export default function PageEditor({
           </div>
         )}
 
-        {showCommentPopup && <CommentDialog editor={editor} pageId={pageId} />}
-      </div>
-
+        {showCommentPopup && (
+          <CommentDialog editor={editor} pageId={pageId} />
+        )}
+      </Box>
       <div
         onClick={() => editor.commands.focus("end")}
         style={{ paddingBottom: "20vh" }}
